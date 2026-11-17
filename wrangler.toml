@@ -1,0 +1,6 @@
+name = "memescanner"
+compatibility_date = "2026-11-17"
+pages_build_output_dir = "./dist"
+
+[vars]
+# Set JUPITER_API_KEY as a secret in Cloudflare Pages settings.

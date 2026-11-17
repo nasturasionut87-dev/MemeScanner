@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090d0b">
+  <meta name="description" content="A simple Solana token trading terminal.">
+  <title>MemeScanner — Solana Trading</title>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <a class="brand" href="#"><span class="brand-mark">M</span><span>MEME<span class="green">SCANNER</span></span></a>
+      <div class="network-pill"><i></i> SOLANA</div>
+      <button id="walletButton" class="wallet-button">Connect wallet</button>
+    </header>
+    <main>
+      <section class="intro">
+        <div class="eyebrow">SOLANA TOKEN TRADING</div>
+        <h1>Find it. Trade it.<br><span>Manage the exit.</span></h1>
+        <p>Paste a token contract address to get started.</p>
+      </section>
+      <section class="panel search-panel">
+        <label for="contract">TOKEN CONTRACT ADDRESS</label>
+        <div class="search-row">
+          <input id="contract" autocomplete="off" spellcheck="false" placeholder="Paste Solana token address…">
+          <button id="searchButton" class="primary-button">Find token</button>
+        </div>
+        <div class="hint">Solana only · Verify the contract address before trading.</div>
+      </section>
+      <section id="tokenPanel" class="panel token-panel hidden">
+        <div class="token-head">
+          <img id="tokenIcon" class="token-icon hidden" alt="">
+          <div id="tokenFallback" class="token-icon">?</div>
+          <div class="token-meta"><div id="tokenName" class="token-name">Token</div><div id="tokenAddress" class="muted mono"></div></div>
+          <div id="verifiedTag" class="token-tag">UNVERIFIED</div>
+        </div>
+        <div class="stats-grid">
+          <div><span>PRICE</span><strong id="tokenPrice">—</strong></div>
+          <div><span>MARKET CAP</span><strong id="tokenMc">—</strong></div>
+          <div><span>LIQUIDITY</span><strong id="tokenLiquidity">—</strong></div>
+        </div>
+        <div id="riskNotice" class="notice">Check token authorities and liquidity before trading. Data can be incomplete.</div>
+      </section>
+      <section id="chartPanel" class="panel chart-panel hidden">
+        <div class="chart-topline">
+          <div><div class="chart-price" id="chartPrice">—</div><div class="chart-change" id="chartChange">Market data from GeckoTerminal</div></div>
+          <div class="chart-marketcap"><strong id="chartMc">—</strong><span>Market cap</span></div>
+        </div>
+        <div class="chart-controls" id="chartControls">
+          <button data-timeframe="1m">1m</button><button data-timeframe="5m" class="active">5m</button><button data-timeframe="15m">15m</button><button data-timeframe="1h">1H</button><button data-timeframe="4h">4H</button><button data-timeframe="1d">1D</button>
+        </div>
+        <div class="chart-wrap"><canvas id="priceChart" aria-label="Token candlestick price chart"></canvas><div id="chartEmpty" class="chart-empty">Chart data will appear here after the token's pool is found.</div></div>
+        <div class="chart-source">Candles and volume · GeckoTerminal · data may be delayed</div>
+      </section>
+      <section class="token-tabs hidden" id="tokenTabs"><button class="active" data-tab="holders">Holders</button><button data-tab="feed">Feed</button><button data-tab="about">About</button></section>
+      <section id="tabContent" class="panel tab-content hidden"><div id="tabText">Holder and token information will appear here.</div></section>
+      <section id="tradeGrid" class="trade-grid hidden">
+        <div class="panel trade-panel">
+          <div class="section-heading"><h2>Trade</h2><span class="muted">SOL ↔ TOKEN</span></div>
+          <div class="trade-tabs">
+            <button class="trade-tab active buy-tab" data-side="buy">Buy</button>
+            <button class="trade-tab sell-tab" data-side="sell">Sell</button>
+          </div>
+          <label id="amountLabel" for="amount">YOU PAY</label>
+          <div class="amount-box"><input id="amount" type="number" min="0" step="any" value="0.1"><span id="amountUnit">SOL</span></div>
+          <div id="quickAmounts" class="quick-amounts">
+            <button data-amount="0.1">0.1</button><button data-amount="0.25">0.25</button><button data-amount="0.5">0.5</button><button data-amount="1">1</button>
+          </div>
+          <div class="slippage-row"><label for="slippage">SLIPPAGE</label><select id="slippage"><option value="100">1%</option><option value="300" selected>3%</option><option value="500">5%</option><option value="1000">10%</option></select></div>
+          <button id="tradeButton" class="primary-button trade-button">Connect wallet to buy</button>
+          <p class="fine-print">Review every wallet transaction before signing.</p>
+        </div>
+        <div class="panel protection-panel">
+          <div class="section-heading"><h2>Exit protection</h2><span class="muted">OCO ORDER</span></div>
+          <p class="panel-copy">Set both targets after buying. When one triggers, the other cancels automatically.</p>
+          <div class="protection-field">
+            <div class="field-title"><label for="takeProfit">Take profit</label><span class="green">SELL ABOVE ENTRY</span></div>
+            <div class="percent-input"><input id="takeProfit" type="number" min="0.1" max="100000" value="50"><span>%</span></div>
+          </div>
+          <div class="protection-field">
+            <div class="field-title"><label for="stopLoss">Stop loss</label><span class="red">SELL BELOW ENTRY</span></div>
+            <div class="percent-input"><input id="stopLoss" type="number" min="0.1" max="99.9" value="20"><span>%</span></div>
+          </div>
+          <div class="protection-field">
+            <div class="field-title"><label for="expiry">Order expiry</label><span class="muted">MAX 30 DAYS</span></div>
+            <select id="expiry" class="full-select"><option value="1">1 day</option><option value="7" selected>7 days</option><option value="14">14 days</option><option value="30">30 days</option></select>
+          </div>
+          <button id="protectButton" class="secondary-button">Protect latest position</button>
+          <div class="hint">Protection transfers the selected tokens into a Jupiter-managed vault. You must approve the deposit in your wallet.</div>
+        </div>
+      </section>
+      <section id="positionsPanel" class="panel position-panel">
+        <div class="section-heading"><h2>Positions & orders</h2><button id="refreshPositions" class="text-button">Refresh</button></div>
+        <div id="positionsList" class="empty-position"><div class="empty-icon">↗</div><strong>No positions yet</strong><span>Your recent buys and active exit orders will appear here.</span></div>
+      </section>
+      <div id="walletModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="walletModalTitle"><div class="modal-card"><button id="closeWalletModal" class="modal-close" aria-label="Close">×</button><div class="modal-icon">◈</div><h2 id="walletModalTitle">Connect a wallet</h2><p>Connect your Solana wallet to buy and sell tokens.</p><button id="phantomButton" class="phantom-button">Connect Phantom</button><small>Phantom is the only supported wallet in this version.</small></div></div>
+      <div id="status" class="status-line" role="status" aria-live="polite"></div>
+      <div class="bottom-note"><i></i> Solana only · Non-custodial wallet signing · Review all transactions</div>
+    </main>
+    <footer>MEMESCANNER <span>·</span> SIMPLE SOLANA TRADING</footer>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
